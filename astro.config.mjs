@@ -7,7 +7,7 @@ import fs from 'node:fs';
 const versions = JSON.parse(fs.readFileSync('./src/versions.json', 'utf8'));
 
 export default defineConfig({
-	site: 'https://kasmin.org',
+	site: process.env.SITE_URL ?? 'https://www.kasmin.org',
 	integrations: [
 		starlight({
 			title: 'Kasmin',
@@ -18,7 +18,7 @@ export default defineConfig({
 				{ tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '48x48' } },
 				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
 				{ tag: 'link', attrs: { rel: 'manifest', href: '/site.webmanifest' } },
-				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://kasmin.org/og-image.png' } },
+				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://www.kasmin.org/og-image.png' } },
 			],
 			defaultLocale: 'root',
 			locales: {

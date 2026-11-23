@@ -8,8 +8,10 @@ Kids' Summer camp Admin. Built with [Astro Starlight](https://starlight.astro.bu
   version per MINOR release (newest PATCH), `latest`, and `dev` (develop branch); writes `src/versions.json` for
   the version menu in the header
 - `npm run build` – export docs and build the site into `dist/`
-- Deployment: GitHub Actions builds every push and pull request; pushes to `main` are uploaded to the web space via
-  FTPS. A daily build picks up new releases.
+- Deployment: GitHub Actions builds every push and pull request and uploads via FTPS (one FTP user per target):
+  `main` → https://www.kasmin.org (production), `develop` → https://www-dev.kasmin.org (development, not indexed).
+  A daily build picks up new releases. Server configuration per target: `server/htaccess-*`.
+- Branches: work on `feature/…` branches, pull requests to `develop`, then `develop` → `main`.
 
 The website is public on purpose: corrections are welcome as issues or pull requests (German or English).
 This website does not use cookies, tracking or external fonts.

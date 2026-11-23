@@ -1,7 +1,8 @@
 name: Website
 
-# Builds kasmin.org (Astro Starlight + versioned docs from kasmin-org/kasmin) on every push and pull request,
-# deploys to the web space via FTPS only from main. A daily build picks up new releases and docs.
+# Builds the website (Astro Starlight + versioned docs from kasmin-org/kasmin) on every push and pull request.
+# Deploys via FTPS: main → https://www.kasmin.org (production), develop → https://www-dev.kasmin.org (development).
+# A daily build picks up new releases and docs.
 
 on:
   push:
@@ -27,23 +28,30 @@ jobs:
         with: { node-version: "24", cache: npm }
       - run: npm ci --no-audit --no-fund
       - run: npm run build
+        env:
+          SITE_URL: ${{ github.ref == 'refs/heads/develop' && 'https://www-dev.kasmin.org' || 'https://www.kasmin.org' }}
+      - name: Server configuration for the target
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/develop" ]; then cp server/htaccess-dev dist/.htaccess; else cp server/htaccess-production dist/.htaccess; fi
       - uses: actions/upload-artifact@v4
         with: { name: site, path: dist, retention-days: 3, include-hidden-files: true }
 
   deploy:
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
     needs: build
     runs-on: ubuntu-latest
-    environment: production
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+      url: ${{ github.ref == 'refs/heads/main' && 'https://www.kasmin.org' || 'https://www-dev.kasmin.org' }}
     steps:
       - uses: actions/download-artifact@v4
         with: { name: site, path: dist }
       - name: Upload via FTPS
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ github.ref == 'refs/heads/main' && secrets.FTP_SERVER || secrets.FTP_DEV_SERVER }}
+          username: ${{ github.ref == 'refs/heads/main' && secrets.FTP_USERNAME || secrets.FTP_DEV_USERNAME }}
+          password: ${{ github.ref == 'refs/heads/main' && secrets.FTP_PASSWORD || secrets.FTP_DEV_PASSWORD }}
           protocol: ftps
           local-dir: ./dist/
           server-dir: ./
