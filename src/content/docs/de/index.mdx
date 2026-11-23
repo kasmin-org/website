@@ -1,0 +1,49 @@
+---
+title: Kasmin
+description: "Kids' Summer camp Admin – Open-Source-Verwaltung für Kindersommerlager."
+template: splash
+hero:
+  tagline: "Kids' Summer camp Admin – Open-Source-Verwaltung für Kindersommerlager: Familien, Anmeldungen, Wartelisten, Sicherheitsblätter, Rechnungen und Aussendungen, mit starkem Fokus auf Automatisierung."
+  image:
+    file: ../../../assets/logo-light.svg
+  actions:
+    - text: Dokumentation
+      link: /de/docs/dev/admin/installation/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/kasmin-org/kasmin
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="Frühe Entwicklung">
+Kasmin ist in früher Entwicklung (Versionen 0.x) und noch nicht für den Echtbetrieb bereit. Version 1.0 folgt nach
+gründlichen Tests.
+</Aside>
+
+<CardGrid stagger>
+	<Card title="Familienkonten" icon="seti:folder">
+		Erziehungsberechtigte verwalten ihre Kinder und deren Daten selbst. Geschwister gehören zu einer Familie;
+		Notfallkontakte werden einmal für die ganze Familie eingetragen.
+	</Card>
+	<Card title="Anmelden ohne Passwort" icon="approve-check">
+		Einmal-Anmeldelinks und Codes per E-Mail. Administrative Rollen nutzen zusätzlich einen zweiten Faktor.
+	</Card>
+	<Card title="Anmeldungen und Warteliste" icon="list-format">
+		Plätze und Altersgrenzen je Rolle, automatische Warteliste mit sichtbarer Position, Reserveplätze für besondere Fälle.
+	</Card>
+	<Card title="Sicherheitsblatt" icon="warning">
+		Frei konfigurierbar, einmal im Jahr mit einem Klick bestätigt statt neu ausgefüllt, verschlüsselt und nur für
+		wenige Personen sichtbar.
+	</Card>
+	<Card title="Automatisierung und API" icon="setting">
+		Rechnungen mit Geschwisterrabatt, Aussendungen und Erinnerungen, die von selbst laufen – mit Vorschau und
+		Freigabe. Alles auch per REST-API und MCP für KI-Assistenten.
+	</Card>
+	<Card title="Läuft überall" icon="laptop">
+		PHP und MariaDB/MySQL auf normalem Webhosting (Installation mit einer Datei) oder als Docker-Image. Freie
+		Software unter der AGPL-3.0.
+	</Card>
+</CardGrid>

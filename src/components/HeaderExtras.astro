@@ -1,0 +1,23 @@
+---
+// Version menu (V06) next to the theme switch. Switching keeps the same page in the other version if it exists.
+import Default from '@astrojs/starlight/components/ThemeSelect.astro';
+import versions from '../versions.json';
+const path = Astro.url.pathname;
+const match = path.match(/^(\/de)?\/docs\/([^/]+)\/(.*)$/);
+const prefix = match?.[1] ?? '';
+const currentSlug = match?.[2];
+const rest = match?.[3] ?? '';
+---
+{match && (
+	<label class="version-menu">
+		<span class="sr-only">Version</span>
+		<select onchange="location.href = this.value" aria-label="Version">
+			{versions.map((v) => (
+				<option value={`${prefix}/docs/${v.slug}/${v.pages.includes(rest.replace(/\/$/, '')) ? rest : ''}`} selected={v.slug === currentSlug}>
+					{v.label}
+				</option>
+			))}
+		</select>
+	</label>
+)}
+<Default />

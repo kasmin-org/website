@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "dev",
+    "label": "development",
+    "current": true,
+    "ref": "origin/develop",
+    "pages": [
+      "admin/events",
+      "admin/forms",
+      "admin/installation",
+      "admin/login",
+      "admin/upgrading",
+      "development/setup",
+      "development/versioning"
+    ]
+  }
+]
