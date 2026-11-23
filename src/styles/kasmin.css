@@ -1,0 +1,20 @@
+/* Kasmin brand colours (see kasmin repository, resources/brand) */
+:root {
+	--sl-color-accent-low: #dcf1dd;
+	--sl-color-accent: #1da029;
+	--sl-color-accent-high: #14501c;
+	--sl-font: 'Lexend', system-ui, sans-serif;
+}
+:root[data-theme='dark'] {
+	--sl-color-accent-low: #14501c;
+	--sl-color-accent: #26b533;
+	--sl-color-accent-high: #dcf1dd;
+}
+.version-menu select {
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.5rem;
+	background: transparent;
+	color: inherit;
+	padding: 0.2rem 0.4rem;
+	font-size: var(--sl-text-sm);
+}

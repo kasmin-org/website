@@ -1,0 +1,20 @@
+{
+  "name": "kasmin-website",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "node scripts/fetch-docs.mjs && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "docs": "node scripts/fetch-docs.mjs",
+    "build:site": "astro build"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.43.1",
+    "astro": "^7.3.6",
+    "sharp": "^0.35.3"
+  },
+  "private": true
+}

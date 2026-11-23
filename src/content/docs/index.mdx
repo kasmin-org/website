@@ -1,0 +1,49 @@
+---
+title: Kasmin
+description: "Kids' Summer camp Admin – open-source management for children's summer camps."
+template: splash
+hero:
+  tagline: "Kids' Summer camp Admin – open-source management for children's summer camps: families, registrations, waitlists, safety sheets, invoices and mailings, with a strong focus on automation."
+  image:
+    file: ../../assets/logo-light.svg
+  actions:
+    - text: Documentation
+      link: /docs/dev/admin/installation/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/kasmin-org/kasmin
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="Early development">
+Kasmin is in early development (versions 0.x) and not ready for production use yet. Version 1.0 will follow after
+thorough testing.
+</Aside>
+
+<CardGrid stagger>
+	<Card title="Family accounts" icon="seti:folder">
+		Legal guardians manage their children and their data themselves. Siblings belong to one family; emergency
+		contacts are entered once for the whole family.
+	</Card>
+	<Card title="Login without passwords" icon="approve-check">
+		One-time login links and codes by e-mail. Administrative roles add a second factor.
+	</Card>
+	<Card title="Registrations and waitlist" icon="list-format">
+		Places and age limits per role, automatic waitlist with visible position, reserve places for special cases.
+	</Card>
+	<Card title="Safety sheet" icon="warning">
+		Fully configurable, confirmed once a year with one click instead of filled in again, encrypted and visible only
+		to a few people.
+	</Card>
+	<Card title="Automation and API" icon="setting">
+		Invoices with sibling discounts, mailings and reminders that run by themselves – with previews and approval.
+		Everything also via REST API and MCP for AI assistants.
+	</Card>
+	<Card title="Runs anywhere" icon="laptop">
+		PHP and MariaDB/MySQL on ordinary web hosting (one-file installer) or as a Docker image. Free software under
+		the AGPL-3.0.
+	</Card>
+</CardGrid>
