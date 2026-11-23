@@ -1,0 +1,6 @@
+# demo.kasmin.org: HTTPS once the subdomain has its own certificate, not indexed.
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow"
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+DirectoryIndex index.html
