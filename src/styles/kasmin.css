@@ -18,3 +18,10 @@
 	padding: 0.2rem 0.4rem;
 	font-size: var(--sl-text-sm);
 }
+
+/* Screenshots: desktop and phone next to each other, below each other on small screens. */
+.kasmin-shots { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }
+.kasmin-shots a { margin: 0 !important; }
+.kasmin-shots img { display: block; height: auto; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; }
+.kasmin-shots a:has(.desktop) { flex: 3 1 320px; }
+.kasmin-shots a:has(.phone) { flex: 1 1 140px; max-width: 240px; }
