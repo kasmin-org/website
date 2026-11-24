@@ -1,8 +1,7 @@
 # www-dev.kasmin.org (development, branch develop): public, but not indexed by search engines.
-# HTTPS redirect follows as soon as www-dev.kasmin.org has its own certificate (Let's Encrypt in the KAS):
-# RewriteEngine On
-# RewriteCond %{HTTPS} !=on
-# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=302,L]
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 <IfModule mod_headers.c>
     Header always set X-Robots-Tag "noindex, nofollow"
