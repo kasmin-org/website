@@ -12,8 +12,8 @@ const rest = match?.[3] ?? '';
 	<label class="version-menu">
 		<span class="sr-only">Version</span>
 		<select onchange="location.href = this.value" aria-label="Version">
-			{versions.map((v) => (
-				<option value={`${prefix}/docs/${v.slug}/${v.pages.includes(rest.replace(/\/$/, '')) ? rest : ''}`} selected={v.slug === currentSlug}>
+			{versions.filter((v) => !v.alias).map((v) => (
+				<option value={`${prefix}/docs/${v.slug}/${v.pages.includes(rest.replace(/\/$/, '')) ? rest : ''}`} selected={v.slug === currentSlug || (v.current && versions.some((a) => a.alias && a.slug === currentSlug))}>
 					{v.label}
 				</option>
 			))}
