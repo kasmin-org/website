@@ -29,7 +29,7 @@ const out = 'src/content/docs/docs';
 fs.rmSync(out, { recursive: true, force: true });
 const versions = [];
 
-function exportDocs(ref, slug, label, current) {
+function exportDocs(ref, slug, label, current, alias = false) {
 	const dir = path.join(out, slug);
 	fs.mkdirSync(dir, { recursive: true });
 	const files = git('ls-tree', '-r', '--name-only', ref, 'docs').split('\n').filter((f) => f.endsWith('.md'));
@@ -47,11 +47,14 @@ function exportDocs(ref, slug, label, current) {
 		fs.writeFileSync(target, `---\ntitle: ${JSON.stringify(title)}\n---\n\n${text}`);
 		pages.push(rel);
 	}
-	versions.push({ slug, label, current, ref, pages });
+	versions.push({ slug, label, current, ref, pages, alias });
 }
 
 if (releases.length > 0) {
 	exportDocs(releases[0], 'latest', `${releases[0].slice(1)} (latest)`, true);
+	// The newest release also under its own number: the help links of an installation name the installed version (V04),
+	// and must still work after the next release. Not shown in the menus.
+	exportDocs(releases[0], releases[0].slice(1, releases[0].lastIndexOf('.')), releases[0].slice(1), false, true);
 	for (const tag of releases.slice(1)) exportDocs(tag, tag.slice(1, tag.lastIndexOf('.')), tag.slice(1), false);
 }
 exportDocs(`origin/${devBranch}`, 'dev', 'development', releases.length === 0);

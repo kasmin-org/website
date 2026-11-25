@@ -35,7 +35,7 @@ export default defineConfig({
 					{ slug: 'screenshots' },
 					{ slug: 'imprint' },
 				] },
-				...versions.map((v) => ({
+				...versions.filter((v) => !v.alias).map((v) => ({
 					label: `Documentation ${v.label}`,
 					translations: { de: `Dokumentation ${v.label}` },
 					collapsed: !v.current,
