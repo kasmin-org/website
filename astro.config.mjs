@@ -27,7 +27,7 @@ export default defineConfig({
 			},
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/kasmin-org/kasmin' }],
 			customCss: ['./src/styles/kasmin.css'],
-			components: { ThemeSelect: './src/components/HeaderExtras.astro' },
+			components: { ThemeSelect: './src/components/HeaderExtras.astro', Sidebar: './src/components/Sidebar.astro' },
 			sidebar: [
 				{ label: 'Kasmin', translations: { de: 'Kasmin' }, items: [
 					{ slug: 'about' },

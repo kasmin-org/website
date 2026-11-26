@@ -1,0 +1,24 @@
+---
+// The menu shows the documentation of one version only: the one that is open (chosen with the version menu at the
+// top), or the newest release on pages outside the documentation. Listing every version made the menu long and
+// repeated the same pages many times.
+import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
+import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+import versions from '../versions.json';
+
+const { sidebar } = Astro.locals.starlightRoute;
+const match = Astro.url.pathname.match(/^(\/de)?\/docs\/([^/]+)\//);
+const german = Astro.url.pathname.startsWith('/de/');
+const listed = versions.filter((v) => !v.alias);
+// An address with the number of the newest release (docs/026/…) is the same documentation as "latest".
+const shown = listed.find((v) => v.slug === match?.[2]) ?? listed.find((v) => v.current) ?? listed[0];
+const isVersionGroup = (label) => listed.some((v) => label.endsWith(` ${v.label}`));
+const entries = sidebar
+	.filter((entry) => entry.type !== 'group' || !isVersionGroup(entry.label) || entry.label.endsWith(` ${shown?.label}`))
+	.map((entry) => (entry.type === 'group' && isVersionGroup(entry.label) ? { ...entry, label: german ? 'Dokumentation' : 'Documentation', collapsed: false } : entry));
+---
+
+<SidebarPersister><SidebarSublist sublist={entries} /></SidebarPersister>
+
+<div class="md:sl-hidden"><MobileMenuFooter /></div>
