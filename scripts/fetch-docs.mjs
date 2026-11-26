@@ -1,6 +1,7 @@
 // Builds the versioned documentation (D8, V03, V07): for every MINOR version the docs/ folder of its newest
 // PATCH tag of kasmin-org/kasmin, plus "latest" (newest release) and "dev" (develop branch).
-// Output: src/content/docs/docs/<slug>/… and src/versions.json for the version menu.
+// Output: src/content/docs/docs/<slug>/…, German pages in src/content/docs/de/docs/<slug>/…, and src/versions.json
+// for the version menu.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -26,7 +27,11 @@ const releases = [...newestPerMinor.values()].sort((a, b) => {
 });
 
 const out = 'src/content/docs/docs';
+// The German documentation (docs/de/… in the repository, from 0.27) goes to the German locale; where a page or a whole
+// version has no German text, Starlight shows the English one there.
+const outDe = 'src/content/docs/de/docs';
 fs.rmSync(out, { recursive: true, force: true });
+fs.rmSync(outDe, { recursive: true, force: true });
 const versions = [];
 
 function exportDocs(ref, slug, label, current, alias = false) {
@@ -36,16 +41,17 @@ function exportDocs(ref, slug, label, current, alias = false) {
 	const pages = [];
 	for (const file of files) {
 		let text = git('show', `${ref}:${file}`);
-		const rel = file.replace(/^docs\//, '').replace(/\.md$/, '');
+		const german = file.startsWith('docs/de/');
+		const rel = file.replace(/^docs\/(de\/)?/, '').replace(/\.md$/, '');
 		const h1 = text.match(/^# (.+)$/m);
 		const title = h1 ? h1[1].trim() : path.basename(rel);
 		text = text.replace(/^# .+\n+/m, '');
 		// Relative links to other Markdown files → Starlight routes.
 		text = text.replace(/\]\((?!https?:)([^)#]+)\.md(#[^)]*)?\)/g, (_, p, hash) => `](../${p.replace(/^\.\.\/\.\.\//, '')}/${hash ?? ''})`);
-		const target = path.join(dir, `${rel}.md`);
+		const target = path.join(german ? path.join(outDe, slug) : dir, `${rel}.md`);
 		fs.mkdirSync(path.dirname(target), { recursive: true });
 		fs.writeFileSync(target, `---\ntitle: ${JSON.stringify(title)}\n---\n\n${text}`);
-		pages.push(rel);
+		if (!german) pages.push(rel);
 	}
 	versions.push({ slug, label, current, ref, pages, alias });
 }
