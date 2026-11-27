@@ -2,7 +2,9 @@ name: Website
 
 # Builds the website (Astro Starlight + versioned docs from kasmin-org/kasmin) on every push and pull request.
 # Deploys via FTPS: main → https://www.kasmin.org (production), develop → https://www-dev.kasmin.org (development).
-# A daily build picks up new releases and docs.
+# A daily build picks up changes of the development docs. Every 15 minutes a small job looks whether Kasmin has a new
+# release whose documentation is not published yet, and only then the site is built – so help links of a new version
+# work soon after the release, without a token that reaches across repositories.
 
 on:
   push:
@@ -10,17 +12,40 @@ on:
   pull_request:
   schedule:
     - cron: "17 3 * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# A newer push replaces a running build. The 15-minute check must not do that (a build takes longer than 15 minutes
+# and would never finish): its runs wait for each other instead.
 concurrency:
-  group: site-${{ github.ref }}
-  cancel-in-progress: true
+  group: site-${{ github.ref }}-${{ github.event.schedule == '*/15 * * * *' && 'check' || 'build' }}
+  cancel-in-progress: ${{ github.event.schedule != '*/15 * * * *' }}
 
 jobs:
+  check:
+    name: Is there something to build?
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.decide.outputs.build }}
+    steps:
+      - id: decide
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          # Pushes, pull requests, manual runs and the daily build always build. The 15-minute check builds only if
+          # the newest release of Kasmin is not the one the published site was built from (build-info.json).
+          if [ "$GITHUB_EVENT_NAME" != "schedule" ] || [ "$SCHEDULE" = "17 3 * * *" ]; then echo "build=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          latest=$(curl -sf --max-time 20 https://api.github.com/repos/kasmin-org/kasmin/releases/latest | jq -r '.tag_name // empty' || true)
+          built=$(curl -sf --max-time 20 https://www.kasmin.org/build-info.json | jq -r '.release // empty' || true)
+          echo "latest release: ${latest:-unknown} · published site: ${built:-unknown}"
+          if [ -n "$latest" ] && [ "$latest" != "$built" ]; then echo "build=true" >> "$GITHUB_OUTPUT"; else echo "build=false" >> "$GITHUB_OUTPUT"; fi
+
   build:
+    needs: check
+    if: ${{ needs.check.outputs.build == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +55,10 @@ jobs:
       - run: npm run build
         env:
           SITE_URL: ${{ github.ref == 'refs/heads/develop' && 'https://www-dev.kasmin.org' || 'https://www.kasmin.org' }}
+      - name: Note which release the site was built from
+        run: |
+          jq -n --arg release "$(jq -r '[.[] | select(.current)][0].ref // empty' src/versions.json)" --arg built "$(date -u +%FT%TZ)" '{release: $release, built: $built}' > dist/build-info.json
+          cat dist/build-info.json
       - name: Server configuration for the target
         run: |
           if [ "$GITHUB_REF" = "refs/heads/develop" ]; then cp server/htaccess-dev dist/.htaccess; else cp server/htaccess-production dist/.htaccess; fi
@@ -59,7 +88,8 @@ jobs:
 
   demo-menu:
     name: Deploy the demo menu (demo.kasmin.org)
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    needs: check
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.check.outputs.build == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: demo-menu
